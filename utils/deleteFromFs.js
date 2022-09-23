@@ -7,9 +7,9 @@ import { promises as fsp } from "fs";
  */
 const deleteFromFs = async (banner, logo) => {
     if (banner !== undefined)
-        await fsp.unlink(banner.path);
+        await fsp.unlink(banner[0].path);
     if (logo !== undefined)
-        await fsp.unlink(logo.path);
+        await fsp.unlink(logo[0].path);
 }
 
 export default deleteFromFs;

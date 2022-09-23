@@ -51,7 +51,7 @@ router.post("/", postOptions, async (req, res) => {
             encrpytedPassword = await bcrypt.hash(password, 10);
         }
         else {
-            await deleteFromFs(banner[0], logo[0])
+            await deleteFromFs(banner, logo)
             return res.status(400).json({ error: "Field password not provided" })
         }
 
@@ -71,16 +71,16 @@ router.post("/", postOptions, async (req, res) => {
         res.status(400).json({ error });
     }
     finally {
-        await deleteFromFs(banner[0], logo[0])
+        await deleteFromFs(banner, logo)
     }
 });
 
-const patchOptions = uploadCompanyFile.fields([{ name: 'banner', maxCount: 1 }, { name: 'logo', maxCount: 1 }])
 router.patch("/:id", postOptions, async (req, res) => {
     logger.info("On update company route");
 
     const { name, email, address, password } = req.body;
     const { banner, logo } = req.files;
+    const { id } = req.params;
 
     try {
         const company = await Company.findByPk(id);
@@ -123,7 +123,7 @@ router.patch("/:id", postOptions, async (req, res) => {
         res.status(400).json({ error });
     }
     finally {
-        await deleteFromFs(banner[0], logo[0])
+        await deleteFromFs(banner, logo)
     }
 });
 
