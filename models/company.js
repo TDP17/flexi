@@ -31,11 +31,19 @@ Company.init({
         type: DataTypes.TEXT,
         allowNull: true
     },
-    logo: {
+    bannerURL: {
         type: DataTypes.TEXT,
         allowNull: false
     },
-    banner: {
+    logoURL: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    },
+    bannerID: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    },
+    logoID: {
         type: DataTypes.TEXT,
         allowNull: false
     }
