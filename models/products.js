@@ -14,7 +14,11 @@ Product.init({
         type: DataTypes.TEXT,
         allowNull: false
     },
-    image: {
+    imageURL: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    },
+    imageID: {
         type: DataTypes.TEXT,
         allowNull: false
     },

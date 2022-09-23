@@ -5,6 +5,7 @@ import { uploadProductFile } from "../utils/multer.js";
 import deleteFromFs from "../utils/deleteFromFs.js";
 import Product from "../models/products.js";
 import Company from "../models/company.js";
+import cloudinaryUploader, { cloudinaryUpdater } from "../utils/cloudinaryUtils.js";
 
 const router = Router();
 
@@ -49,7 +50,7 @@ router.get("/:company_id", async (req, res) => {
 
     try {
         const products = await Product.findAll({ where: { company_id } });
-        if (products.length > 0) 
+        if (products.length > 0)
             res.status(200).json({ products })
         else res.status(400).json({ error: "No products with given company_id found" })
     } catch (error) {
@@ -61,13 +62,14 @@ router.get("/:company_id", async (req, res) => {
 router.post("/", uploadProductFile.single('image'), async (req, res) => {
     logger.info("On product creation route");
 
-    // @TODO get this with request.company_id later, else return unauthorized
+    // @TODO get this with request.company_id later, else return unauthorized since admin maybe should not be able to edit a product??
     const { company_id, name, price } = req.body;
     const image = req.file;
 
     try {
         if (image !== undefined) {
-            const product = await Product.create({ name, price, company_id, image: image.path })
+            const { url: imageURL, id: imageID } = await cloudinaryUploader(image);
+            const product = await Product.create({ name, price, company_id, imageURL, imageID })
             res.status(201).json({ message: "Product Created", product });
         }
         else {
@@ -79,6 +81,45 @@ router.post("/", uploadProductFile.single('image'), async (req, res) => {
 
         await deleteFromFs(image.path);
         res.status(400).json({ error });
+    }
+});
+
+router.patch("/:id", uploadProductFile.single('image'), async (req, res) => {
+    logger.info("On product updation route");
+
+    // @TODO get this with request.company_id later, else return unauthorized since admin maybe should not be able to edit a product??
+    const { id } = req.params;
+    const { name, price } = req.body;
+    const image = req.file;
+
+    try {
+        const product = await Product.findByPk(id);
+
+        if (!product)
+            return res.status(400).json({ error: "Product with given id not found" });
+
+        if (name)
+            product.name = name;
+        if (price)
+            product.price = price;
+
+        if (image) {
+            const { url: imageURL, id: imageID } = await cloudinaryUpdater(product.imageID, image);
+            product.imageURL = imageURL
+            product.imageID = imageID;
+        }
+
+        const updatedProduct = await product.save();
+        if (updatedProduct) {
+            res.status(200).json({ message: "Product updated", product: updatedProduct });
+        }
+    } catch (error) {
+        logger.error(error);
+        res.status(400).json({ error });
+    }
+    finally {
+        if (image)
+            await deleteFromFs(image)
     }
 });
 

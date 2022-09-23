@@ -1,15 +1,19 @@
 import { promises as fsp } from "fs";
+import logger from "./logger.js";
 
 /**
  * Deletes files created in case of errors
  * @param {*} banner 
  * @param {*} logo 
  */
-const deleteFromFs = async (banner, logo) => {
-    if (banner !== undefined)
-        await fsp.unlink(banner[0].path);
-    if (logo !== undefined)
-        await fsp.unlink(logo[0].path);
+const deleteFromFs = async (...images) => {
+    images.forEach(async (image) => {
+        if (typeof (image) == "array")
+            await fsp.unlink(image[0].path);
+        else if (typeof (image) == "object")
+            await fsp.unlink(image.path);
+        else logger.warn("Using not supported type", typeof (image), image);
+    })
 }
 
 export default deleteFromFs;

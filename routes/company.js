@@ -116,7 +116,7 @@ router.patch("/:id", postOptions, async (req, res) => {
         const updatedCompany = await company.save();
         if (updatedCompany) {
             delete updatedCompany.dataValues.password;
-            res.status(201).json({ message: "Company updated", company: updatedCompany });
+            res.status(200).json({ message: "Company updated", company: updatedCompany });
         }
     } catch (error) {
         logger.error(error);
