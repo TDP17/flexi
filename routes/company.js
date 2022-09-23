@@ -6,6 +6,7 @@ import uploadCompanyFile from "../utils/multer.js";
 import deleteFromFs from "../utils/deleteFromFs.js";
 import Company from "../models/company.js";
 import cloudinaryHandler from "../utils/cloudinaryHandler.js";
+import isAuthorized from "../utils/isAuthorized.js";
 
 const router = Router();
 
@@ -36,8 +37,10 @@ router.get("/:id", async (req, res) => {
 });
 
 const postOptions = uploadCompanyFile.fields([{ name: 'banner', maxCount: 1 }, { name: 'logo', maxCount: 1 }])
-router.post("/", postOptions, async (req, res) => {
+router.post("/", postOptions, isAuthorized, async (req, res) => {
     logger.info("On create company route");
+
+    if (!req.is_admin) return res.status(401).json({ error: "Unauthorized to use this route" });
 
     const { name, email, address, password } = req.body;
     const { banner, logo } = req.files;
@@ -78,9 +81,13 @@ router.post("/", postOptions, async (req, res) => {
 router.patch("/:id", postOptions, async (req, res) => {
     logger.info("On update company route");
 
+    if (!req.is_admin && !req.company_id) return res.status(401).json({ error: "Unauthorized to use this route" });
+
     const { name, email, address, password } = req.body;
     const { banner, logo } = req.files;
     const { id } = req.params;
+
+    if(id !== req.company_id) return res.status(401).json({ error: "Unauthorized to use this route" });
 
     try {
         const company = await Company.findByPk(id);
@@ -94,7 +101,7 @@ router.patch("/:id", postOptions, async (req, res) => {
             company.password = encrpytedPassword;
         }
 
-        if (name)
+        if (name && req.is_admin)
             company.name = name;
         if (email)
             company.email = email;

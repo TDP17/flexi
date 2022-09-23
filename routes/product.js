@@ -62,8 +62,10 @@ router.get("/:company_id", async (req, res) => {
 router.post("/", uploadProductFile.single('image'), async (req, res) => {
     logger.info("On product creation route");
 
-    // @TODO get this with request.company_id later, else return unauthorized since admin maybe should not be able to edit a product??
-    const { company_id, name, price } = req.body;
+    if (!req.company_id) return res.status(401).json({ error: "Unauthorized to use this route" });
+
+    const company_id = req.company_id;
+    const { name, price } = req.body;
     const image = req.file;
 
     try {
@@ -87,13 +89,16 @@ router.post("/", uploadProductFile.single('image'), async (req, res) => {
 router.patch("/:id", uploadProductFile.single('image'), async (req, res) => {
     logger.info("On product updation route");
 
-    // @TODO get this with request.company_id later, else return unauthorized since admin maybe should not be able to edit a product??
+    if (!req.company_id) return res.status(401).json({ error: "Unauthorized to use this route" });
+
     const { id } = req.params;
     const { name, price } = req.body;
     const image = req.file;
 
     try {
         const product = await Product.findByPk(id);
+
+        if (req.company_id !== product.company_id) return res.status(401).json({ error: "Unauthorized to use this route" });
 
         if (!product)
             return res.status(400).json({ error: "Product with given id not found" });
