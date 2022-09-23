@@ -5,7 +5,7 @@ import logger from "../utils/logger.js";
 import uploadCompanyFile from "../utils/multer.js";
 import deleteFromFs from "../utils/deleteFromFs.js";
 import Company from "../models/company.js";
-import cloudinaryUploader, { cloudinaryUpdater } from "../utils/cloudinaryUtils.js";
+import cloudinaryHandler from "../utils/cloudinaryHandler.js";
 
 const router = Router();
 
@@ -55,8 +55,8 @@ router.post("/", postOptions, async (req, res) => {
             return res.status(400).json({ error: "Field password not provided" })
         }
 
-        const { url: bannerURL, id: bannerID } = await cloudinaryUploader(banner[0]);
-        const { url: logoURL, id: logoID } = await cloudinaryUploader(logo[0]);
+        const { url: bannerURL, id: bannerID } = await cloudinaryHandler.uploadFile(banner[0]);
+        const { url: logoURL, id: logoID } = await cloudinaryHandler.uploadFile(logo[0]);
 
         if (bannerURL && logoURL) {
             const company = await Company.create({ name, email, address, password: encrpytedPassword, bannerURL, logoURL, bannerID, logoID });
@@ -102,13 +102,13 @@ router.patch("/:id", postOptions, async (req, res) => {
             company.address = address;
 
         if (banner) {
-            const { url: bannerURL, id: bannerID } = await cloudinaryUpdater(company.bannerID, banner[0]);
+            const { url: bannerURL, id: bannerID } = await cloudinaryHandler.uploadFile(company.bannerID, banner[0]);
             company.bannerURL = bannerURL
             company.bannerID = bannerID;
         }
 
         if (logo) {
-            const { url: logoURL, id: logoID } = await cloudinaryUpdater(company.logoID, logo[0]);
+            const { url: logoURL, id: logoID } = await cloudinaryHandler.uploadFile(company.logoID, logo[0]);
             company.logoURL = logoURL
             company.logoID = logoID;
         }

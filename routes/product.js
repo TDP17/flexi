@@ -5,7 +5,7 @@ import { uploadProductFile } from "../utils/multer.js";
 import deleteFromFs from "../utils/deleteFromFs.js";
 import Product from "../models/products.js";
 import Company from "../models/company.js";
-import cloudinaryUploader, { cloudinaryUpdater } from "../utils/cloudinaryUtils.js";
+import cloudinaryHandler from "../utils/cloudinaryHandler.js";
 
 const router = Router();
 
@@ -68,7 +68,7 @@ router.post("/", uploadProductFile.single('image'), async (req, res) => {
 
     try {
         if (image !== undefined) {
-            const { url: imageURL, id: imageID } = await cloudinaryUploader(image);
+            const { url: imageURL, id: imageID } = await cloudinaryHandler.uploadFile(image);
             const product = await Product.create({ name, price, company_id, imageURL, imageID })
             res.status(201).json({ message: "Product Created", product });
         }
@@ -104,7 +104,7 @@ router.patch("/:id", uploadProductFile.single('image'), async (req, res) => {
             product.price = price;
 
         if (image) {
-            const { url: imageURL, id: imageID } = await cloudinaryUpdater(product.imageID, image);
+            const { url: imageURL, id: imageID } = await cloudinaryHandler.updateFile(product.imageID, image);
             product.imageURL = imageURL
             product.imageID = imageID;
         }
