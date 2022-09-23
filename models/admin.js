@@ -2,9 +2,9 @@ import { DataTypes, Sequelize } from 'sequelize';
 
 import sequelize from '../utils/database.js'
 
-class User extends Sequelize.Model { };
+class Admin extends Sequelize.Model { };
 
-User.init({
+Admin.init({
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -22,10 +22,6 @@ User.init({
         type: DataTypes.TEXT,
         allowNull: false,
     },
-    isAdmin: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false
-    }
-}, { sequelize, modelName: 'user' });
+}, { sequelize, modelName: 'admin' });
 
-export default User;
+export default Admin;
