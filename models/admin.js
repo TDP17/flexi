@@ -1,27 +1,30 @@
-import { DataTypes, Sequelize } from 'sequelize';
+import { DataTypes, Sequelize } from "sequelize";
 
-import sequelize from '../utils/database.js'
+import sequelize from "../utils/database.js";
 
-class Admin extends Sequelize.Model { };
+class Admin extends Sequelize.Model {}
 
-Admin.init({
+Admin.init(
+  {
     id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
     email: {
-        type: DataTypes.TEXT,
-        unique: true,
-        allowNull: false,
-        validate: {
-            isEmail: true
-        }
+      type: DataTypes.TEXT,
+      unique: true,
+      allowNull: false,
+      validate: {
+        isEmail: true,
+      },
     },
     password: {
-        type: DataTypes.TEXT,
-        allowNull: false,
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
-}, { sequelize, modelName: 'admin' });
+  },
+  { sequelize, modelName: "admin" }
+);
 
 export default Admin;
