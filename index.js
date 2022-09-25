@@ -3,13 +3,11 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cloudinary from "cloudinary";
 
-import sequelize from "./utils/database.js";
 import logger from "./utils/logger.js";
 import companyRoutes from "./routes/company.js";
 import productRoutes from "./routes/product.js";
 import authRoutes from "./routes/auth.js";
-import Company from "./models/company.js";
-import Product from "./models/products.js";
+import initializeDatabase from "./utils/intiializeDatabase.js";
 
 dotenv.config();
 
@@ -36,16 +34,7 @@ app.use("/", (req, res) => {
 
 app.listen(port, async () => {
   try {
-    Company.hasMany(Product, {
-      foreignKey: { name: "company_id", allowNull: false },
-    });
-    Product.belongsTo(Company, {
-      foreignKey: { name: "company_id", allowNull: false },
-    });
-
-    await sequelize.authenticate();
-    await sequelize.sync();
-
+    await initializeDatabase();
     logger.info(
       `Connection has been established successfully, server listening on PORT ${port}`
     );
