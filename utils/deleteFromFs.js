@@ -8,7 +8,7 @@ import logger from "./logger.js";
  */
 const deleteFromFs = async (...images) => {
     images.forEach(async (image) => {
-        if (typeof (image) === "array")
+        if (Array.isArray(image))
             await fsp.unlink(image[0].path);
         else if (typeof (image) === "object")
             await fsp.unlink(image.path);
