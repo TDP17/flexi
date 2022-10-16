@@ -47,6 +47,10 @@ Company.init({
         type: DataTypes.TEXT,
         allowNull: false
     },
+    approved: {
+        type: Sequelize.ENUM("pending", "accepted", "rejected"),
+        allowNull: false
+    }
 }, { sequelize, paranoid: true, modelName: 'company' });
 
 export default Company;
