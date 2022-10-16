@@ -89,7 +89,6 @@ export const postCompany = async (req, res) => {
           logoURL,
           bannerID,
           logoID,
-          status: "pending",
         });
         if (company) {
           delete company.dataValues.password;

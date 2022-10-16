@@ -49,6 +49,7 @@ Company.init({
     },
     approved: {
         type: Sequelize.ENUM("pending", "accepted", "rejected"),
+        defaultValue: "pending",
         allowNull: false
     }
 }, { sequelize, paranoid: true, modelName: 'company' });
