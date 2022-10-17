@@ -2,7 +2,7 @@ import { DataTypes, Sequelize } from 'sequelize';
 
 import sequelize from '../utils/database.js'
 
-class Company extends Sequelize.Model {};
+class Company extends Sequelize.Model { };
 
 Company.init({
     id: {
@@ -46,8 +46,12 @@ Company.init({
     logoID: {
         type: DataTypes.TEXT,
         allowNull: false
+    },
+    approved: {
+        type: Sequelize.ENUM("pending", "accepted", "rejected"),
+        defaultValue: "pending",
+        allowNull: false
     }
-
-}, { sequelize, modelName: 'company' });
+}, { sequelize, paranoid: true, modelName: 'company' });
 
 export default Company;

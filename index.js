@@ -12,6 +12,7 @@ import authRoutes from "./routes/auth.js";
 // import Product from "./models/products.js";
 
 import Database from "./models/index.js";
+// import initializeDatabase from "./utils/intiializeDatabase.js";
 
 dotenv.config();
 
@@ -36,28 +37,14 @@ app.use("/", (req, res) => {
   res.status(200).send({ staus: true, message: "Welcome to Futura API" });
 });
 
-// app.listen(port, async () => {
-//   try {
-//     Company.hasMany(Product, {
-//       foreignKey: { name: "company_id", allowNull: false },
-//     });
-//     Product.belongsTo(Company, {
-//       foreignKey: { name: "company_id", allowNull: false },
-//     });
-
-//     await sequelize.authenticate();
-//     await sequelize.sync();
-
-//     logger.info(
-//       `Connection has been established successfully, server listening on PORT ${port}`
-//     );
-//   } catch (error) {
-//     logger.error("Unable to connect to the database:", error);
-//   }
-// });
-
-Database.sequelize.sync().then(() => {
-  app.listen(port, () => {
-    logger.info(`Server is running on port ${port}.`);
-  });
+app.listen(port, async () => {
+  try {
+    Database.sequelize.authenticate();
+    Database.sequelize.sync();
+    logger.info(
+      `Connection has been established successfully, server listening on PORT ${port}`
+    );
+  } catch (error) {
+    logger.error("Unable to connect to the database:", error);
+  }
 });
