@@ -1,57 +1,68 @@
-import { DataTypes, Sequelize } from 'sequelize';
+import { DataTypes, Sequelize } from "sequelize";
 
-import sequelize from '../utils/database.js'
+import sequelize from "../utils/database.js";
 
-class Company extends Sequelize.Model { };
+class Company extends Sequelize.Model {}
 
-Company.init({
+Company.init(
+  {
     id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
     name: {
-        type: DataTypes.TEXT,
-        unique: true,
-        allowNull: false
+      type: DataTypes.TEXT,
+      unique: true,
+      allowNull: false,
     },
     email: {
-        type: DataTypes.TEXT,
-        unique: true,
-        allowNull: false,
-        validate: {
-            isEmail: true
-        }
+      type: DataTypes.TEXT,
+      unique: true,
+      allowNull: false,
+      validate: {
+        isEmail: true,
+      },
     },
     password: {
-        type: DataTypes.TEXT,
-        allowNull: false,
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     address: {
-        type: DataTypes.TEXT,
-        allowNull: true
+      type: DataTypes.TEXT,
+      allowNull: true,
     },
     bannerURL: {
-        type: DataTypes.TEXT,
-        allowNull: false
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     logoURL: {
-        type: DataTypes.TEXT,
-        allowNull: false
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     bannerID: {
-        type: DataTypes.TEXT,
-        allowNull: false
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     logoID: {
-        type: DataTypes.TEXT,
-        allowNull: false
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     approved: {
-        type: Sequelize.ENUM("pending", "accepted", "rejected"),
-        defaultValue: "pending",
-        allowNull: false
-    }
-}, { sequelize, paranoid: true, modelName: 'company' });
+      type: DataTypes.TEXT,
+      defaultValue: "pending",
+      allowNull: false,
+      validate: {
+        customValidator: (value) => {
+          const enums = ["pending", "accepted", "rejected"];
+          if (!enums.includes(value)) {
+            throw new Error("not a valid option");
+          }
+        },
+      },
+    },
+  },
+  { sequelize, paranoid: true, modelName: "company" }
+);
 
 export default Company;
