@@ -8,6 +8,7 @@ import logger from "./logger.js";
  */
 const deleteFromFs = async (...images) => {
   images.forEach(async (image) => {
+    if(image == undefined) return;
     if (Array.isArray(image)) await fsp.unlink(image[0].path);
     else if (typeof image === "object") await fsp.unlink(image.path);
     else logger.warn("Using not supported type", typeof image, image);

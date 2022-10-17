@@ -32,7 +32,9 @@ export const getProudctById = async (req, res) => {
     else res.status(400).json({ error: "No product with given id found" });
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error });
+    if (error.errors[0])
+      res.status(400).json({ error: error.errors[0].message });
+    else res.status(400).json({ error });
   }
 };
 
@@ -66,7 +68,9 @@ export const getProductByCompanyId = async (req, res) => {
     }
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error });
+    if (error.errors[0])
+      res.status(400).json({ error: error.errors[0].message });
+    else res.status(400).json({ error });
   }
 };
 
@@ -104,7 +108,9 @@ export const postProduct = async (req, res) => {
   } catch (error) {
     logger.error(error);
     await deleteFromFs(image.path);
-    res.status(500).json({ error });
+    if (error.errors[0])
+      res.status(400).json({ error: error.errors[0].message });
+    else res.status(400).json({ error });
   }
 };
 
@@ -151,7 +157,9 @@ export const patchProduct = async (req, res) => {
     }
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error });
+    if (error.errors[0])
+      res.status(400).json({ error: error.errors[0].message });
+    else res.status(400).json({ error });
   } finally {
     if (image) await deleteFromFs(image);
   }
@@ -182,6 +190,8 @@ export const deleteProduct = async (req, res) => {
     res.status(200).json({ message: "Product deleted", id });
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error });
+    if (error.errors[0])
+      res.status(400).json({ error: error.errors[0].message });
+    else res.status(400).json({ error });
   }
 };

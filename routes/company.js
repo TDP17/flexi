@@ -8,6 +8,7 @@ import {
   getAllCompaniesByStatus,
   getCompanyById,
   patchCompany,
+  patchCompanyStatus,
   postCompany,
 } from "../controllers/companyController.js";
 
@@ -41,7 +42,6 @@ const multerOptions = uploadCompanyFile.fields([
 router.post(
   "/",
   multerOptions,
-  isAuthorized,
   [
     body("password")
       .not()
@@ -81,6 +81,7 @@ router.post(
 
 router.patch(
   "/:id",
+  isAuthorized,
   multerOptions,
   [
     param("id")
@@ -94,18 +95,24 @@ router.patch(
 );
 
 router.patch(
-  "/status/:id/:status",
+  "/status/:id",
+  isAuthorized,
   multerOptions,
   [
+    body("status")
+      .not()
+      .isEmpty()
+      .withMessage("Status must not be empty")
+      .trim()
+      .escape(),
     param("id")
       .not()
       .isEmpty()
       .isInt()
       .withMessage("Query param id incorrect")
       .toInt(),
-    param("status").not().isEmpty().withMessage("Query param status incorrect"),
   ],
-  patchCompany
+  patchCompanyStatus
 );
 
 export default router;

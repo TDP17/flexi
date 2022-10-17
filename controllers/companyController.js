@@ -52,56 +52,56 @@ export const getCompanyById = async (req, res) => {
     else res.status(400).json({ error: "No company with given id found" });
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error });
+    if (error.errors[0])
+      res.status(400).json({ error: error.errors[0].message });
+    else res.status(400).json({ error });
   }
 };
 
 export const postCompany = async (req, res) => {
   logger.info("On create company route");
 
-  if (req.is_admin === true) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty())
-      return res.status(400).json({ error: errors.array()[0].msg });
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ error: errors.array()[0].msg });
 
-    // if (!req.is_admin)
-    //   return res.status(401).json({ error: "Unauthorized to use this route" });
+  const { name, email, address, password } = req.body;
+  const { banner, logo } = req.files;
 
-    const { name, email, address, password } = req.body;
-    const { banner, logo } = req.files;
+  try {
+    const encrpytedPassword = await bcrypt.hash(password, 10);
 
-    try {
-      const encrpytedPassword = await bcrypt.hash(password, 10);
+    const { url: bannerURL, id: bannerID } = await cloudinaryHandler.uploadFile(
+      banner[0]
+    );
+    const { url: logoURL, id: logoID } = await cloudinaryHandler.uploadFile(
+      logo[0]
+    );
 
-      const { url: bannerURL, id: bannerID } =
-        await cloudinaryHandler.uploadFile(banner[0]);
-      const { url: logoURL, id: logoID } = await cloudinaryHandler.uploadFile(
-        logo[0]
-      );
-
-      if (bannerURL && logoURL) {
-        const company = await Company.create({
-          name,
-          email,
-          address,
-          password: encrpytedPassword,
-          bannerURL,
-          logoURL,
-          bannerID,
-          logoID,
-        });
-        if (company) {
-          delete company.dataValues.password;
-          res.status(201).json({ message: "Company created", company });
-        }
-      } else res.status(500).json({ error: "Error uploading files" });
-    } catch (error) {
-      logger.error(error);
-      res.status(500).json({ error });
-    } finally {
-      await deleteFromFs(banner, logo);
-    }
-  } else res.status(401).json({ error: "Unauthorized to use this route" });
+    if (bannerURL && logoURL) {
+      const company = await Company.create({
+        name,
+        email,
+        address,
+        password: encrpytedPassword,
+        bannerURL,
+        logoURL,
+        bannerID,
+        logoID,
+      });
+      if (company) {
+        delete company.dataValues.password;
+        res.status(201).json({ message: "Company created", company });
+      }
+    } else res.status(500).json({ error: "Error uploading files" });
+  } catch (error) {
+    logger.error(error);
+    if (error.errors[0])
+      res.status(400).json({ error: error.errors[0].message });
+    else res.status(400).json({ error });
+  } finally {
+    await deleteFromFs(banner, logo);
+  }
 };
 
 export const patchCompany = async (req, res) => {
@@ -111,10 +111,16 @@ export const patchCompany = async (req, res) => {
     return res.status(401).json({ error: "Unauthorized to use this route" });
 
   const { name, email, address, password } = req.body;
-  const { banner, logo } = req.files;
+
+  let banner, logo;
+  if (req.files) {
+    const { b, l } = req.files;
+    banner = b;
+    logo = l;
+  }
   const { id } = req.params;
 
-  if (id !== req.company_id)
+  if (!req.is_admin && id !== req.company_id)
     return res.status(401).json({ error: "Unauthorized to use this route" });
 
   try {
@@ -158,7 +164,9 @@ export const patchCompany = async (req, res) => {
     }
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error });
+    if (error.errors[0])
+      res.status(400).json({ error: error.errors[0].message });
+    else res.status(400).json({ error });
   } finally {
     await deleteFromFs(banner, logo);
   }
@@ -171,7 +179,8 @@ export const patchCompanyStatus = async (req, res) => {
   if (!errors.isEmpty())
     return res.status(400).json({ error: errors.array()[0].msg });
 
-  const { id, status } = req.params;
+  const { id } = req.params;
+  const { status } = req.body;
 
   if (!req.is_admin && !req.company_id)
     return res.status(401).json({ error: "Unauthorized to use this route" });
@@ -193,6 +202,8 @@ export const patchCompanyStatus = async (req, res) => {
     }
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error });
+    if (error.errors[0])
+      res.status(400).json({ error: error.errors[0].message });
+    else res.status(400).json({ error });
   }
 };

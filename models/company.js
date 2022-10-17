@@ -48,7 +48,7 @@ Company.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    approved: {
+    status: {
       type: DataTypes.TEXT,
       defaultValue: "pending",
       allowNull: false,
@@ -56,7 +56,7 @@ Company.init(
         customValidator: (value) => {
           const enums = ["pending", "accepted", "rejected"];
           if (!enums.includes(value)) {
-            throw new Error("not a valid option");
+            throw new Error("Invalid status, please send a status that is pending/accepted/rejected");
           }
         },
       },
