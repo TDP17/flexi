@@ -3,11 +3,16 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cloudinary from "cloudinary";
 
+// import sequelize from "./utils/database.js";
 import logger from "./utils/logger.js";
 import companyRoutes from "./routes/company.js";
 import productRoutes from "./routes/product.js";
 import authRoutes from "./routes/auth.js";
-import initializeDatabase from "./utils/intiializeDatabase.js";
+// import Company from "./models/company.js";
+// import Product from "./models/products.js";
+
+import Database from "./models/index.js";
+// import initializeDatabase from "./utils/intiializeDatabase.js";
 
 dotenv.config();
 
@@ -34,7 +39,8 @@ app.use("/", (req, res) => {
 
 app.listen(port, async () => {
   try {
-    await initializeDatabase();
+    Database.sequelize.authenticate();
+    Database.sequelize.sync();
     logger.info(
       `Connection has been established successfully, server listening on PORT ${port}`
     );
