@@ -20,12 +20,12 @@ dotenv.config();
 // );
 
 const sequelize = new Sequelize(
-  process.env.dbSchema,
-  process.env.dbUser,
-  process.env.dbPassword,
+  process.env.DB_DATABASE,
+  process.env.DB_USER,
+  process.env.DB_PASS,
   {
-    host: "127.0.0.1",
-    port: 5432,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
     dialect: "postgres",
     logging: (msg) => logger.debug(msg),
     pool: {

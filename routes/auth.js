@@ -21,7 +21,6 @@ router.post("/login/admin", async (req, res) => {
   }
 
   try {
-    console.log("reached here");
     const admin = await Admin.findOne({ where: { email: email } });
 
     if (admin) {
