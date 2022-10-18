@@ -32,7 +32,7 @@ export const getProudctById = async (req, res) => {
     else res.status(400).json({ error: "No product with given id found" });
   } catch (error) {
     logger.error(error);
-    if (error.errors[0])
+    if (error.errors)
       res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   }
@@ -45,7 +45,6 @@ export const getProductByCompanyId = async (req, res) => {
   if (!errors.isEmpty())
     return res.status(400).json({ error: errors.array()[0].msg });
 
-  // @TODO verify this with request.company_id later, else return unauthorized
   const { company_id } = req.params;
   const { limit, page } = req.query;
 
@@ -61,14 +60,14 @@ export const getProductByCompanyId = async (req, res) => {
       ],
     });
     if (company) {
-      delete company.dataValues.password;
+      // delete company.dataValues.password;
       res.status(200).json({ products: company.products });
     } else {
       res.status(400).json({ error: "Company with given id not found" });
     }
   } catch (error) {
     logger.error(error);
-    if (error.errors[0])
+    if (error.errors)
       res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   }
@@ -108,7 +107,7 @@ export const postProduct = async (req, res) => {
   } catch (error) {
     logger.error(error);
     await deleteFromFs(image.path);
-    if (error.errors[0])
+    if (error.errors)
       res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   }
@@ -157,7 +156,7 @@ export const patchProduct = async (req, res) => {
     }
   } catch (error) {
     logger.error(error);
-    if (error.errors[0])
+    if (error.errors)
       res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   } finally {
@@ -190,7 +189,7 @@ export const deleteProduct = async (req, res) => {
     res.status(200).json({ message: "Product deleted", id });
   } catch (error) {
     logger.error(error);
-    if (error.errors[0])
+    if (error.errors)
       res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   }

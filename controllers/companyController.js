@@ -52,7 +52,7 @@ export const getCompanyById = async (req, res) => {
     else res.status(400).json({ error: "No company with given id found" });
   } catch (error) {
     logger.error(error);
-    if (error.errors[0])
+    if (error.errors)
       res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   }
@@ -96,7 +96,7 @@ export const postCompany = async (req, res) => {
     } else res.status(500).json({ error: "Error uploading files" });
   } catch (error) {
     logger.error(error);
-    if (error.errors[0])
+    if (error.errors)
       res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   } finally {
@@ -164,7 +164,7 @@ export const patchCompany = async (req, res) => {
     }
   } catch (error) {
     logger.error(error);
-    if (error.errors[0])
+    if (error.errors)
       res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   } finally {
@@ -182,7 +182,7 @@ export const patchCompanyStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
-  if (!req.is_admin && !req.company_id)
+  if (!req.is_admin)
     return res.status(401).json({ error: "Unauthorized to use this route" });
 
   try {
@@ -202,7 +202,7 @@ export const patchCompanyStatus = async (req, res) => {
     }
   } catch (error) {
     logger.error(error);
-    if (error.errors[0])
+    if (error.errors)
       res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   }

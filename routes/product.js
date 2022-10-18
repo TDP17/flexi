@@ -29,9 +29,6 @@ router.get(
   getProudctById
 );
 
-/**
- * @TODO Decide between this and the one below
- */
 router.get(
   "/company/:company_id",
   [
