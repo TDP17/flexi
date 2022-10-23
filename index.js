@@ -33,6 +33,20 @@ app.use("/", (req, res) => {
   res.status(200).send({ status: true, message: "Welcome to Futura API" });
 });
 
+app.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  res.send({
+    status: false,
+    enviroment: process.env.MODE || "production",
+    message:
+      err.status === 403
+        ? err.message
+        : process.env.MODE === "development"
+        ? err.message
+        : "Error Occoured",
+  });
+});
+
 app.listen(port, async () => {
   try {
     await Database.sequelize.authenticate();
