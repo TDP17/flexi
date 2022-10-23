@@ -15,9 +15,15 @@ Admin.init(
       type: DataTypes.TEXT,
       unique: true,
       allowNull: false,
-      validate: {
-        isEmail: true,
-      },
+      /*
+        test@gmail.com is valid
+        achyut.shukla.btech2020@sitpune.edu.in is invalid
+
+        needs a custom validator ie.regex validator
+      */
+      // validate: {
+      //   isEmail: true,
+      // },
     },
     password: {
       type: DataTypes.TEXT,

@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import createError from "http-errors";
 
 /**
  * @param {*} req The request object
@@ -11,16 +12,16 @@ const isAuthorized = (req, res, next) => {
   const authHeader = req.get("Authorization");
   let decodedToken;
   if (!authHeader) {
-    return res.status(401).json({ error: "Unauthorized" });
+    return next(createError(401, "Unauthorized"));
   } else {
-    const token = req.get("Authorization").split(" ")[1];
+    const token = req.get("Authorization").trim().split(" ")[1];
     try {
       decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     } catch (error) {
-      return res.status(401).json({ error: "Token expired or malformed" });
+      next(createError(403, "Invalid Token"));
     }
     if (!decodedToken) {
-      return res.status(401).json({ error: "Unauthorized" });
+      next(createError(403, "Unauthorized"));
     }
 
     req.is_admin = decodedToken.is_admin;

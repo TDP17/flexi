@@ -29,8 +29,8 @@ app.use("/auth", authRoutes);
 app.use("/company", companyRoutes);
 app.use("/product", productRoutes);
 
-app.use("/", (req, res) => {
-  res.status(200).send({ status: true, message: "Welcome to Futura API" });
+app.use("*", (req, res) => {
+  res.status(400).send({ status: false, message: "Not Found" });
 });
 
 app.use((err, req, res, next) => {
@@ -50,7 +50,7 @@ app.use((err, req, res, next) => {
 app.listen(port, async () => {
   try {
     await Database.sequelize.authenticate();
-    await Database.sequelize.sync();
+    await Database.sequelize.sync({ force: true, alter: true });
     logger.info(
       `Connection has been established successfully, server listening on PORT ${port}`
     );
