@@ -1,12 +1,13 @@
 import bcrypt from "bcrypt";
 import { validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
+import createError from "http-errors";
 
 import logger from "../utils/logger.js";
 import Admin from "../models/admin.js";
 import Company from "../models/company.js";
 
-export const adminLogin = async (req, res) => {
+export const adminLogin = async (req, res, next) => {
   logger.info("On admin login route");
 
   const errors = validationResult(req);
@@ -28,20 +29,21 @@ export const adminLogin = async (req, res) => {
         );
         res.status(200).json({ token, is_admin: true });
       } else {
-        res.status(401).json({ error: "Invalid Credentials" });
+        next(createError(401, "Invalid Credentials"));
       }
     } else {
-      res.status(401).json({ error: "Invalid Credentials" });
+      next(createError(401, "Invalid Credentials"));
     }
   } catch (error) {
     logger.error(error);
-    if (error.errors)
-      res.status(400).json({ error: error.errors[0].message });
-    else res.status(400).json({ error });
+    next(createError(500, "Internal Server Error"));
+    // if (error.errors) res.status(400).json({ error: error.errors[0].message });
+    // else next(createError(401, error.message));
+    // // else res.status(400).json({ error });
   }
 };
 
-export const companyLogin = async (req, res) => {
+export const companyLogin = async (req, res, next) => {
   logger.info("On company login route");
 
   const errors = validationResult(req);
@@ -66,13 +68,13 @@ export const companyLogin = async (req, res) => {
         );
         res.status(200).json({ token, is_admin: false });
       } else {
-        res.status(401).json({ error: "Incorrect credentials" });
+        next(createError(403, "Invalid Credentials"));
       }
-    } else res.status(401).json({ error: "Incorrect credentials" });
+    } else next(createError(403, "Invalid Credentials"));
   } catch (error) {
     logger.error(error);
-    if (error.errors)
-      res.status(400).json({ error: error.errors[0].message });
-    else res.status(400).json({ error });
+    next(createError(500, "Internal Server Error"));
+    // if (error.errors) res.status(400).json({ error: error.errors[0].message });
+    // else next(createError(400, error));
   }
 };

@@ -49,17 +49,20 @@ Company.init(
       allowNull: false,
     },
     status: {
-      type: DataTypes.TEXT,
+      // type: DataTypes.TEXT,
+      // defaultValue: "pending",
+      // allowNull: false,
+      // validate: {
+      //   customValidator: (value) => {
+      //     const enums = ["pending", "accepted", "rejected"];
+      //     if (!enums.includes(value)) {
+      //       throw new Error("Invalid status, please send a status that is pending/accepted/rejected");
+      //     }
+      //   },
+      // },
+      type: DataTypes.ENUM("pending", "accepted", "rejected"),
       defaultValue: "pending",
       allowNull: false,
-      validate: {
-        customValidator: (value) => {
-          const enums = ["pending", "accepted", "rejected"];
-          if (!enums.includes(value)) {
-            throw new Error("Invalid status, please send a status that is pending/accepted/rejected");
-          }
-        },
-      },
     },
   },
   { sequelize, paranoid: true, modelName: "company" }

@@ -1,19 +1,21 @@
 import bcrypt from "bcrypt";
 import { validationResult } from "express-validator";
+import createError from "http-errors";
 
 import logger from "../utils/logger.js";
 import deleteFromFs from "../utils/deleteFromFs.js";
 import Company from "../models/company.js";
 import cloudinaryHandler from "../utils/cloudinaryHandler.js";
 
-export const getAllCompanies = async (req, res) => {
+export const getAllCompanies = async (req, res, next) => {
   logger.info("On get all companies route");
 
   try {
     const companies = await Company.findAll({ exclude: "password" });
     res.status(200).json({ companies });
   } catch (error) {
-    res.status(400).json({ error });
+    // res.status(400).json({ error });
+    next(createError(400, error.message));
   }
 };
 
@@ -33,7 +35,8 @@ export const getAllCompaniesByStatus = async (req, res) => {
     });
     res.status(200).json({ companies });
   } catch (error) {
-    res.status(400).json({ error });
+    // res.status(400).json({ error });
+    next(createError(400, error));
   }
 };
 
@@ -52,8 +55,7 @@ export const getCompanyById = async (req, res) => {
     else res.status(400).json({ error: "No company with given id found" });
   } catch (error) {
     logger.error(error);
-    if (error.errors)
-      res.status(400).json({ error: error.errors[0].message });
+    if (error.errors) res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   }
 };
@@ -96,8 +98,7 @@ export const postCompany = async (req, res) => {
     } else res.status(500).json({ error: "Error uploading files" });
   } catch (error) {
     logger.error(error);
-    if (error.errors)
-      res.status(400).json({ error: error.errors[0].message });
+    if (error.errors) res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   } finally {
     await deleteFromFs(banner, logo);
@@ -164,8 +165,7 @@ export const patchCompany = async (req, res) => {
     }
   } catch (error) {
     logger.error(error);
-    if (error.errors)
-      res.status(400).json({ error: error.errors[0].message });
+    if (error.errors) res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   } finally {
     await deleteFromFs(banner, logo);
@@ -202,8 +202,7 @@ export const patchCompanyStatus = async (req, res) => {
     }
   } catch (error) {
     logger.error(error);
-    if (error.errors)
-      res.status(400).json({ error: error.errors[0].message });
+    if (error.errors) res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   }
 };
