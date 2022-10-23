@@ -1,9 +1,37 @@
 import { Router } from "express";
 import { body } from "express-validator";
 
-import { adminLogin, companyLogin } from "../controllers/authController.js";
+import {
+  adminLogin,
+  companyLogin,
+  registerAdmin,
+} from "../controllers/authController.js";
+
+import isAuthorized from "../utils/isAuthorized.js";
 
 const router = Router();
+
+router.post(
+  "/register/admin",
+  isAuthorized,
+  [
+    body("password")
+      .not()
+      .isEmpty()
+      .withMessage("Password must not be empty")
+      .trim()
+      .escape(),
+    body("email")
+      .isEmail()
+      .withMessage("Email is invalid")
+      .not()
+      .isEmpty()
+      .withMessage("Email must not be empty")
+      .trim()
+      .escape(),
+  ],
+  registerAdmin
+);
 
 router.post(
   "/login/admin",

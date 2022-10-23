@@ -78,3 +78,28 @@ export const companyLogin = async (req, res, next) => {
     // else next(createError(400, error));
   }
 };
+
+export const registerAdmin = async (req, res, next) => {
+  try {
+    logger.info("On admin register route");
+    const user = await Admin.findOne({ where: { email: req.body.email } });
+    if (user) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+    console.log(req.body);
+    const password = await bcrypt.hash(req.body.password, 10);
+    const result = await Admin.create({
+      email: req.body.email,
+      password: password,
+    });
+    if (result) {
+      res
+        .status(201)
+        .json({ status: true, message: "Admin created successfully" });
+    } else {
+      next(createError(400, "Error Occoured while creating admin"));
+    }
+  } catch (err) {
+    next(createError(500, err || "Internal Server Error"));
+  }
+};
