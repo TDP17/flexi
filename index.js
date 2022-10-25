@@ -50,7 +50,8 @@ app.use((err, req, res, next) => {
 app.listen(port, async () => {
   try {
     await Database.sequelize.authenticate();
-    await Database.sequelize.sync({ force: true, alter: true });
+    logger.info("Database authenticated");
+    await Database.sequelize.sync();
     logger.info(
       `Connection has been established successfully, server listening on PORT ${port}`
     );
