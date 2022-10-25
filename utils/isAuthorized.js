@@ -18,7 +18,7 @@ const isAuthorized = (req, res, next) => {
     try {
       decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     } catch (error) {
-      next(createError(403, "Invalid Token"));
+      next(createError(401, "Invalid Token"));
     }
     if (!decodedToken) {
       next(createError(401, "Unauthorized"));
