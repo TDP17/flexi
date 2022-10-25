@@ -21,7 +21,7 @@ const isAuthorized = (req, res, next) => {
       next(createError(403, "Invalid Token"));
     }
     if (!decodedToken) {
-      next(createError(403, "Unauthorized"));
+      next(createError(401, "Unauthorized"));
     }
 
     req.is_admin = decodedToken.is_admin;
