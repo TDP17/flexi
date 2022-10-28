@@ -13,7 +13,7 @@ const router = Router();
 
 router.post(
   "/register/admin",
-  isAuthorized,
+  // isAuthorized,
   [
     body("password")
       .not()
