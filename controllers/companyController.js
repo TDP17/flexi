@@ -11,7 +11,9 @@ export const getAllCompanies = async (req, res, next) => {
   logger.info("On get all companies route");
 
   try {
-    const companies = await Company.findAll({ exclude: "password" });
+    const companies = await Company.findAll({
+      attributes: { exclude: ["password"] },
+    });
     res.status(200).json({ companies });
   } catch (error) {
     // res.status(400).json({ error });
@@ -29,9 +31,9 @@ export const getAllCompaniesByStatus = async (req, res) => {
   const { status } = req.params;
 
   try {
-    const companies = await Company.findAll({
+    const companies = await Company.findAndCountAll({
       where: { status: status },
-      exclude: "password",
+      attributes: { exclude: "password" },
     });
     res.status(200).json({ companies });
   } catch (error) {
@@ -50,7 +52,9 @@ export const getCompanyById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const company = await Company.findByPk(id, { exclude: "password" });
+    const company = await Company.findByPk(id, {
+      attributes: { exclude: "password" },
+    });
     if (company && company !== undefined) res.status(200).json({ company });
     else res.status(400).json({ error: "No company with given id found" });
   } catch (error) {

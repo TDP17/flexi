@@ -27,13 +27,14 @@ export const getProudctById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const product = await Product.findByPk(id, { exclude: "password" });
+    const product = await Product.findByPk(id, {
+      attributes: { exclude: "password" },
+    });
     if (product && product !== undefined) res.status(200).json({ product });
     else res.status(400).json({ error: "No product with given id found" });
   } catch (error) {
     logger.error(error);
-    if (error.errors)
-      res.status(400).json({ error: error.errors[0].message });
+    if (error.errors) res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   }
 };
@@ -67,8 +68,7 @@ export const getProductByCompanyId = async (req, res) => {
     }
   } catch (error) {
     logger.error(error);
-    if (error.errors)
-      res.status(400).json({ error: error.errors[0].message });
+    if (error.errors) res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   }
 };
@@ -107,8 +107,7 @@ export const postProduct = async (req, res) => {
   } catch (error) {
     logger.error(error);
     await deleteFromFs(image.path);
-    if (error.errors)
-      res.status(400).json({ error: error.errors[0].message });
+    if (error.errors) res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   }
 };
@@ -156,8 +155,7 @@ export const patchProduct = async (req, res) => {
     }
   } catch (error) {
     logger.error(error);
-    if (error.errors)
-      res.status(400).json({ error: error.errors[0].message });
+    if (error.errors) res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   } finally {
     if (image) await deleteFromFs(image);
@@ -189,8 +187,7 @@ export const deleteProduct = async (req, res) => {
     res.status(200).json({ message: "Product deleted", id });
   } catch (error) {
     logger.error(error);
-    if (error.errors)
-      res.status(400).json({ error: error.errors[0].message });
+    if (error.errors) res.status(400).json({ error: error.errors[0].message });
     else res.status(400).json({ error });
   }
 };
