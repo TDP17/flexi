@@ -221,7 +221,7 @@ export const patchCompany = async (req, res, next) => {
   }
 };
 
-export const patchCompanyStatus = async (req, res) => {
+export const patchCompanyStatus = async (req, res, next) => {
   logger.info("On update company status route");
 
   const errors = validationResult(req);
