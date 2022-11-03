@@ -15,6 +15,10 @@ const isAuthorized = (req, res, next) => {
     return next(createError(401, "Unauthorized"));
   } else {
     const token = req.get("Authorization").trim().split(" ")[1];
+    if (!token || token === "") {
+      next(createError(401, "Unauthorized"));
+      return;
+    }
     try {
       decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     } catch (error) {
