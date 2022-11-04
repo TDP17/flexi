@@ -15,6 +15,10 @@ Product.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
     imageURL: {
       type: DataTypes.TEXT,
       allowNull: false,

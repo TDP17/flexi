@@ -117,7 +117,7 @@ export const postProduct = async (req, res, next) => {
   }
 
   const company_id = req.company_id;
-  const { name, price } = req.body;
+  const { name, price, description } = req.body;
   const image = req.file;
 
   try {
@@ -128,6 +128,7 @@ export const postProduct = async (req, res, next) => {
       const product = await Product.create({
         name,
         price,
+        description,
         company_id,
         imageURL,
         imageID,
@@ -172,7 +173,7 @@ export const patchProduct = async (req, res, next) => {
   }
 
   const { id } = req.params;
-  const { name, price } = req.body;
+  const { name, price, description } = req.body;
   const image = req.file;
 
   try {
@@ -192,6 +193,7 @@ export const patchProduct = async (req, res, next) => {
 
     if (name) product.name = name;
     if (price) product.price = price;
+    if (description) product.description = description;
 
     if (image) {
       const { url: imageURL, id: imageID } = await cloudinaryHandler.updateFile(
