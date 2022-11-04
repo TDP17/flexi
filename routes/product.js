@@ -73,6 +73,12 @@ router.post(
       .toInt()
       .trim()
       .escape(),
+    body("description")
+      .not()
+      .isEmpty()
+      .withMessage("Description must not be empty")
+      .trim()
+      .escape(),
     check("file")
       .custom((value, { req }) => req.file !== undefined)
       .withMessage("Image must be provided"),
